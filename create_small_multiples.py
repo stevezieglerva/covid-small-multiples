@@ -4,20 +4,29 @@ import matplotlib.pyplot as plt
 
 
 def main():
-    df = pd.read_csv("all-states-history.csv")
-    print(df)
+    covid_data_raw = pd.read_csv("all-states-history.csv")
+    print(covid_data_raw)
 
-    state_list = df["state"].unique()
+    population = pd.read_csv("state_2010_populations.csv")
+    print(population)
+
+    covid_with_population = pd.merge(covid_data_raw, population, on="state")
+    print(covid_with_population)
+
+    covid_with_population["per_capita"] = (
+        covid_with_population["positiveIncrease"] / covid_with_population["millions"]
+    )
+
+    state_list = covid_with_population["state"].unique()
     print(state_list)
 
-    for state in ["NC", "VA", "NY", "FL"]:
-        state_daily = df[df["state"] == state][
-            ["date", "positiveIncrease"]
+    for state in ["NC", "VA", "NY", "FL", "CA"]:
+        state_daily = covid_with_population[covid_with_population["state"] == state][
+            ["date", "per_capita"]
         ].sort_values("date")
 
-        print(state_daily)
         fig, ax = plt.subplots(figsize=(4, 4))
-        ax.plot(state_daily["date"], state_daily["positiveIncrease"].rolling(7).mean())
+        ax.plot(state_daily["date"], state_daily["per_capita"].rolling(7).mean())
 
         plt.savefig(f"{state}.png")
 
