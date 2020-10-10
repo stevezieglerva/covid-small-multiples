@@ -10,7 +10,7 @@ def main():
     state_list = df["state"].unique()
     print(state_list)
 
-    for state in ["NC", "VA"]:
+    for state in ["NC", "VA", "NY", "FL"]:
         state_daily = df[df["state"] == state][
             ["date", "positiveIncrease"]
         ].sort_values("date")
