@@ -31,25 +31,27 @@ def main():
     print(state_list)
 
     final_data = no_inf
-    for state in state_list:  # ["NC", "VA"]:
-        print(state)
+    fig, ax = plt.subplots(2, 2, figsize=(10, 10))
+    for index, state in enumerate(["NC", "VA", "SC", "ND"]):
+        row = index % 2
+        col = index % 2
+        print(f"{row}, {col}. {state}")
         state_daily = final_data[final_data["state"] == state][
             ["date", "per_capita"]
         ].sort_values("date")
 
-        fig, ax = plt.subplots(1, 3, figsize=(1.5, 1))
-        ax[0].plot(
+        ax[row, col].plot(
             state_daily["date"],
             state_daily["per_capita"].rolling(7).mean(),
         )
 
-        ax[0].set_ylim(0, max_per_capita_value)
-        ax[0].get_xaxis().set_visible(False)
-        ax[0].get_yaxis().set_visible(False)
-        ax[0].set_title(state)
-        plt.savefig(f"state_{state}.png", bbox_inches="tight")
+        ax[row, col].set_ylim(0, max_per_capita_value)
+        ax[row, col].get_xaxis().set_visible(False)
+        ax[row, col].get_yaxis().set_visible(False)
+        ax[row, col].set_title(state)
+    plt.savefig(f"state_{state}.png", bbox_inches="tight")
 
-        # Create figure and plot space
+    # Create figure and plot space
 
 
 if __name__ == "__main__":
