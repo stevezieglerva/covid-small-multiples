@@ -33,7 +33,7 @@ def main():
     final_data = no_inf
     fig, ax = plt.subplots(2, 2, figsize=(10, 10))
     for index, state in enumerate(["NC", "VA", "SC", "ND"]):
-        row = index % 2
+        row = int(index / 2)
         col = index % 2
         print(f"{row}, {col}. {state}")
         state_daily = final_data[final_data["state"] == state][
@@ -49,7 +49,7 @@ def main():
         ax[row, col].get_xaxis().set_visible(False)
         ax[row, col].get_yaxis().set_visible(False)
         ax[row, col].set_title(state)
-    plt.savefig(f"state_{state}.png", bbox_inches="tight")
+    plt.savefig(f"all_states.png", bbox_inches="tight")
 
     # Create figure and plot space
 
