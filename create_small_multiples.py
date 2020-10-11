@@ -55,37 +55,41 @@ def main():
         plt.subplots_adjust(hspace=0.1)
         width = 4
         height = 13
-        fig, ax = plt.subplots(height, width, figsize=(10, 12))
-        fig.tight_layout()
-        for index, state in enumerate(state_list):  # ["NC", "VA", "SC", "ND"]):
-            row = int(index / width)
-            col = index % width
-            print(f"{row}, {col}. {state}")
-            state_daily = final_data[final_data["state"] == state][
-                ["date", "per_capita"]
-            ].sort_values("date")
+        for image_size in ["regular", "large"]:
+            current_fig_size = (10, 12)
+            if image_size == "large":
+                current_fig_size = (14, 16)
+            fig, ax = plt.subplots(height, width, figsize=current_fig_size)
+            fig.tight_layout()
+            for index, state in enumerate(state_list):  # ["NC", "VA", "SC", "ND"]):
+                row = int(index / width)
+                col = index % width
+                print(f"{row}, {col}. {state}")
+                state_daily = final_data[final_data["state"] == state][
+                    ["date", "per_capita"]
+                ].sort_values("date")
 
-            color = GRAY
-            title_annotation = ""
-            if state in largest_states:
-                color = RED
-                title_annotation = " !"
-            if state in smallest_states:
-                color = GREEN
-                title_annotation = " *"
+                color = GRAY
+                title_annotation = ""
+                if state in largest_states:
+                    color = RED
+                    title_annotation = " !"
+                if state in smallest_states:
+                    color = GREEN
+                    title_annotation = " *"
 
-            ax[row, col].plot(
-                state_daily["date"],
-                state_daily["per_capita"].rolling(7).mean(),
-                color=color,
-            )
-            ax[row, col].set_ylim(0, max_per_capita_value)
-            ax[row, col].get_xaxis().set_visible(False)
-            ax[row, col].get_yaxis().set_visible(False)
-            ax[row, col].set_title(f"{state}{title_annotation}", y=0.9)
-        ax[12, 3].get_xaxis().set_visible(False)
-        ax[12, 3].get_yaxis().set_visible(False)
-        plt.savefig(f"covid_all_states_{metric}.png")
+                ax[row, col].plot(
+                    state_daily["date"],
+                    state_daily["per_capita"].rolling(7).mean(),
+                    color=color,
+                )
+                ax[row, col].set_ylim(0, max_per_capita_value)
+                ax[row, col].get_xaxis().set_visible(False)
+                ax[row, col].get_yaxis().set_visible(False)
+                ax[row, col].set_title(f"{state}{title_annotation}", y=0.9)
+            ax[12, 3].get_xaxis().set_visible(False)
+            ax[12, 3].get_yaxis().set_visible(False)
+            plt.savefig(f"covid_all_states_{metric}_{image_size}.png")
 
 
 if __name__ == "__main__":
