@@ -1,6 +1,7 @@
 import pandas as pd
 import xlrd
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 def main():
@@ -17,18 +18,35 @@ def main():
         covid_with_population["positiveIncrease"] / covid_with_population["millions"]
     )
 
+    no_inf = covid_with_population.replace([np.inf, -np.inf], np.nan).dropna(
+        subset=["per_capita"], how="all"
+    )
+    max_by_state = no_inf.groupby(by="state")["per_capita"].max()
+    print(max_by_state)
+    max_per_capita_value = no_inf["per_capita"].rolling(7).mean().max() * 1.05
+
+    print(f"max_per_capita_value: {max_per_capita_value}")
+
     state_list = covid_with_population["state"].unique()
     print(state_list)
 
-    for state in ["NC", "VA", "NY", "FL", "CA"]:
-        state_daily = covid_with_population[covid_with_population["state"] == state][
+    final_data = no_inf
+    for state in state_list:  # ["NC", "VA"]:
+        print(state)
+        state_daily = final_data[final_data["state"] == state][
             ["date", "per_capita"]
         ].sort_values("date")
 
-        fig, ax = plt.subplots(figsize=(4, 4))
-        ax.plot(state_daily["date"], state_daily["per_capita"].rolling(7).mean())
+        fig, ax = plt.subplots(figsize=(1.5, 1))
+        ax.plot(
+            state_daily["date"],
+            state_daily["per_capita"].rolling(7).mean(),
+        )
 
-        plt.savefig(f"{state}.png")
+        ax.set_ylim(0, max_per_capita_value)
+        ax.get_xaxis().set_visible(False)
+        ax.get_yaxis().set_visible(False)
+        plt.savefig(f"state_{state}.png")
 
         # Create figure and plot space
 
