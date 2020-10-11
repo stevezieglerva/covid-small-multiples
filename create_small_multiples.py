@@ -37,16 +37,17 @@ def main():
             ["date", "per_capita"]
         ].sort_values("date")
 
-        fig, ax = plt.subplots(figsize=(1.5, 1))
-        ax.plot(
+        fig, ax = plt.subplots(1, 3, figsize=(1.5, 1))
+        ax[0].plot(
             state_daily["date"],
             state_daily["per_capita"].rolling(7).mean(),
         )
 
-        ax.set_ylim(0, max_per_capita_value)
-        ax.get_xaxis().set_visible(False)
-        ax.get_yaxis().set_visible(False)
-        plt.savefig(f"state_{state}.png")
+        ax[0].set_ylim(0, max_per_capita_value)
+        ax[0].get_xaxis().set_visible(False)
+        ax[0].get_yaxis().set_visible(False)
+        ax[0].set_title(state)
+        plt.savefig(f"state_{state}.png", bbox_inches="tight")
 
         # Create figure and plot space
 
