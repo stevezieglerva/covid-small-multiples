@@ -14,6 +14,9 @@ def main():
     covid_with_population = pd.merge(covid_data_raw, population, on="state")
     print(covid_with_population)
 
+    max_date = covid_with_population["date"].max()
+    print(f"max_date: {max_date}")
+
     metrics = ["positiveIncrease", "hospitalizedIncrease", "deathIncrease"]
     for metric in metrics:
         covid_with_population["per_capita"] = (
@@ -23,23 +26,25 @@ def main():
         no_inf = covid_with_population.replace([np.inf, -np.inf], np.nan).dropna(
             subset=["per_capita"], how="all"
         )
-        max_by_state = no_inf.groupby(by="state")["per_capita"].max()
-        print(max_by_state)
-        max_per_capita_value = no_inf["per_capita"].rolling(7).mean().max() * 1.05
 
+        max_per_capita_value = no_inf["per_capita"].rolling(7).mean().max() * 1.05
         print(f"max_per_capita_value: {max_per_capita_value}")
+
+        last_day_values = no_inf[no_inf["date"] == max_date][
+            ["date", "state", "per_capita"]
+        ].nlargest(3, "per_capita")
+        print(last_day_values)
 
         state_list = covid_with_population["state"].unique()
         print(state_list)
 
         final_data = no_inf
-        # plt.tight_layout(pad=0, w_pad=3, h_pad=3)
         plt.subplots_adjust(hspace=0.1)
         width = 4
         height = 13
         fig, ax = plt.subplots(height, width, figsize=(10, 12))
         fig.tight_layout()
-        for index, state in enumerate(state_list):  # ["NC", "VA", "SC", "ND"]):
+        for index, state in enumerate(["NC"]):  # ["NC", "VA", "SC", "ND"]):
             row = int(index / width)
             col = index % width
             print(f"{row}, {col}. {state}")
