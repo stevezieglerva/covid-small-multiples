@@ -54,6 +54,8 @@ def main():
         ax[row, col].get_xaxis().set_visible(False)
         ax[row, col].get_yaxis().set_visible(False)
         ax[row, col].set_title(state, y=0.9)
+    ax[12, 3].get_xaxis().set_visible(False)
+    ax[12, 3].get_yaxis().set_visible(False)
     plt.savefig(f"all_states.png")
 
     # Create figure and plot space
