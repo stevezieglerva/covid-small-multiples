@@ -31,9 +31,12 @@ def main():
     print(state_list)
 
     final_data = no_inf
+    # plt.tight_layout(pad=0, w_pad=3, h_pad=3)
+    plt.subplots_adjust(hspace=0.1)
     width = 4
     height = 13
-    fig, ax = plt.subplots(height, width, figsize=(10, 10))
+    fig, ax = plt.subplots(height, width, figsize=(10, 12))
+    fig.tight_layout()
     for index, state in enumerate(state_list):  # ["NC", "VA", "SC", "ND"]):
         row = int(index / width)
         col = index % width
@@ -50,7 +53,7 @@ def main():
         ax[row, col].set_ylim(0, max_per_capita_value)
         ax[row, col].get_xaxis().set_visible(False)
         ax[row, col].get_yaxis().set_visible(False)
-        ax[row, col].set_title(state)
+        ax[row, col].set_title(state, y=0.9)
     plt.savefig(f"all_states.png")
 
     # Create figure and plot space
