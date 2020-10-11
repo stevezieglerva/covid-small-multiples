@@ -2,6 +2,7 @@ import pandas as pd
 import xlrd
 import matplotlib.pyplot as plt
 import numpy as np
+from datetime import datetime, timedelta
 
 GRAY = "#808080"
 RED = "#FF0000"
@@ -15,11 +16,17 @@ def main():
     population = pd.read_csv("state_2010_populations.csv")
     print(population)
 
+    covid_data_raw["real_date"] = pd.to_datetime(
+        covid_data_raw["date"], format="%Y-%m-%d"
+    )
+
     covid_with_population = pd.merge(covid_data_raw, population, on="state")
     print(covid_with_population)
 
-    max_date = covid_with_population["date"].max()
+    max_date = covid_with_population["real_date"].max()
     print(f"max_date: {max_date}")
+    ninety_days_ago = max_date - timedelta(90)
+    print(f"ninety_days_ago: {ninety_days_ago}")
 
     metrics = ["positiveIncrease", "hospitalizedIncrease", "deathIncrease"]
     for metric in metrics:
@@ -34,14 +41,14 @@ def main():
         max_per_capita_value = no_inf["per_capita"].rolling(7).mean().max() * 1.05
         print(f"max_per_capita_value: {max_per_capita_value}")
 
-        last_day_largest = no_inf[no_inf["date"] == max_date][
+        last_day_largest = no_inf[no_inf["real_date"] == max_date][
             ["date", "state", "per_capita"]
         ].nlargest(3, "per_capita")
         print("Largest:")
         print(last_day_largest)
         largest_states = last_day_largest["state"].tolist()
 
-        last_day_smallest = no_inf[no_inf["date"] == max_date][
+        last_day_smallest = no_inf[no_inf["real_date"] == max_date][
             ["date", "state", "per_capita"]
         ].nsmallest(3, "per_capita")
         print("Smallest:")
@@ -51,45 +58,52 @@ def main():
         state_list = covid_with_population["state"].unique()
         print(state_list)
 
-        final_data = no_inf
-        plt.subplots_adjust(hspace=0.1)
-        width = 4
-        height = 13
-        for image_size in ["regular", "large"]:
-            current_fig_size = (10, 12)
-            if image_size == "large":
-                current_fig_size = (14, 16)
-            fig, ax = plt.subplots(height, width, figsize=current_fig_size)
-            fig.tight_layout()
-            for index, state in enumerate(state_list):  # ["NC", "VA", "SC", "ND"]):
-                row = int(index / width)
-                col = index % width
-                print(f"{row}, {col}. {state}")
-                state_daily = final_data[final_data["state"] == state][
-                    ["date", "per_capita"]
-                ].sort_values("date")
+        for earliest_date in [ninety_days_ago, datetime(2010, 5, 3)]:
+            final_data = no_inf
+            plt.subplots_adjust(hspace=0.1)
+            width = 4
+            height = 13
+            for image_size in ["regular", "large"]:
+                current_fig_size = (10, 12)
+                if image_size == "large":
+                    current_fig_size = (14, 16)
+                fig, ax = plt.subplots(height, width, figsize=current_fig_size)
+                fig.tight_layout()
+                for index, state in enumerate(state_list):
+                    row = int(index / width)
+                    col = index % width
+                    print(f"{row}, {col}. {state}")
+                    # tips[(tips['time'] == 'Dinner') & (tips['tip'] > 5.00)]
+                    state_daily = final_data[
+                        (final_data["state"] == state)
+                        & (final_data["real_date"] > earliest_date)
+                    ][["date", "per_capita"]].sort_values("date")
 
-                color = GRAY
-                title_annotation = ""
-                if state in largest_states:
-                    color = RED
-                    title_annotation = " !"
-                if state in smallest_states:
-                    color = GREEN
-                    title_annotation = " *"
+                    color = GRAY
+                    title_annotation = ""
+                    if state in largest_states:
+                        color = RED
+                        title_annotation = " !"
+                    if state in smallest_states:
+                        color = GREEN
+                        title_annotation = " *"
 
-                ax[row, col].plot(
-                    state_daily["date"],
-                    state_daily["per_capita"].rolling(7).mean(),
-                    color=color,
-                )
-                ax[row, col].set_ylim(0, max_per_capita_value)
-                ax[row, col].get_xaxis().set_visible(False)
-                ax[row, col].get_yaxis().set_visible(False)
-                ax[row, col].set_title(f"{state}{title_annotation}", y=0.9)
-            ax[12, 3].get_xaxis().set_visible(False)
-            ax[12, 3].get_yaxis().set_visible(False)
-            plt.savefig(f"covid_all_states_{metric}_{image_size}.png")
+                    ax[row, col].plot(
+                        state_daily["date"],
+                        state_daily["per_capita"].rolling(7).mean(),
+                        color=color,
+                    )
+                    ax[row, col].set_ylim(0, max_per_capita_value)
+                    ax[row, col].get_xaxis().set_visible(False)
+                    ax[row, col].get_yaxis().set_visible(False)
+                    ax[row, col].set_title(f"{state}{title_annotation}", y=0.9)
+                ax[12, 3].get_xaxis().set_visible(False)
+                ax[12, 3].get_yaxis().set_visible(False)
+
+                date_desc = "all_time"
+                if earliest_date == ninety_days_ago:
+                    date_desc = "90days"
+                plt.savefig(f"covid_all_states_{metric}_{date_desc}_{image_size}.png")
 
 
 if __name__ == "__main__":
