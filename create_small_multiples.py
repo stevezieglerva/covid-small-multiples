@@ -44,31 +44,8 @@ def main():
             [np.inf, -np.inf], np.nan
         ).dropna(subset=["per_capita"], how="all")
 
-        last_day_largest = (
-            covid_cleaned_infinity_fields[
-                covid_cleaned_infinity_fields["real_date"] >= week_ago
-            ][["date", "state", "per_capita"]]
-            .groupby(by="state")
-            .sum()
-            .nlargest(3, "per_capita")
-        )
-        print("Largest:")
-        print(last_day_largest)
-        largest_states = last_day_largest.index.values.tolist()
-        print(f"largest_states: {largest_states}")
-
-        last_day_smallest = (
-            covid_cleaned_infinity_fields[
-                covid_cleaned_infinity_fields["real_date"] >= week_ago
-            ][["date", "state", "per_capita"]]
-            .groupby(by="state")
-            .sum()
-            .nsmallest(3, "per_capita")
-        )
-        print("Smallest:")
-        print(last_day_smallest)
-        smallest_states = last_day_smallest.index.values.tolist()
-        print(f"smallest_states: {smallest_states}")
+        largest_states = get_largest_states(covid_cleaned_infinity_fields, week_ago)
+        smallest_states = get_smallest_states(covid_cleaned_infinity_fields, week_ago)
 
         for earliest_date in [ninety_days_ago, datetime(2010, 5, 3)]:
             final_data = covid_cleaned_infinity_fields
@@ -76,26 +53,22 @@ def main():
             width = 4
             height = 13
 
-            max_per_capita_value = (
-                covid_cleaned_infinity_fields[
-                    covid_cleaned_infinity_fields["real_date"] >= earliest_date
-                ]["per_capita"]
-                .rolling(7)
-                .mean()
-                .max()
-                * 1.05
+            max_per_capita_value = get_max_per_capita_value_for_timeframe(
+                covid_cleaned_infinity_fields, earliest_date
             )
 
-            for image_size in IMAGE_SIZES:
-                chart_meta = f"""
+            chart_meta = f"""
 
 _____________________________________________
 metric: {metric}
 earliest_date: {earliest_date}
-image_size: {image_size}
 max_per_capita_value: {max_per_capita_value}
+largest_states: {largest_states}
+smallest_status: {smallest_states}
 """
-                print(chart_meta)
+            print(chart_meta)
+
+            for image_size in IMAGE_SIZES:
 
                 current_fig_size = (10, 12)
                 if image_size == "large":
@@ -136,6 +109,42 @@ max_per_capita_value: {max_per_capita_value}
                 if earliest_date == ninety_days_ago:
                     date_desc = "90days"
                 plt.savefig(f"covid_all_states_{metric}_{date_desc}_{image_size}.png")
+
+
+def get_largest_states(df, date):
+    last_week_largest = (
+        df[df["real_date"] >= date][["date", "state", "per_capita"]]
+        .groupby(by="state")
+        .sum()
+        .nlargest(3, "per_capita")
+    )
+    print("Largest:")
+    print(last_week_largest)
+    largest_states = last_week_largest.index.values.tolist()
+    print(f"largest_states: {largest_states}")
+    return largest_states
+
+
+def get_smallest_states(df, date):
+    last_week_smallest = (
+        df[df["real_date"] >= date][["date", "state", "per_capita"]]
+        .groupby(by="state")
+        .sum()
+        .nsmallest(3, "per_capita")
+    )
+    print("Smallest:")
+    print(last_week_smallest)
+    smallest_states = last_week_smallest.index.values.tolist()
+    print(f"smallest_states: {smallest_states}")
+    return smallest_states
+
+
+def get_max_per_capita_value_for_timeframe(df, earliest_date):
+    max_per_capita_value = (
+        df[df["real_date"] >= earliest_date]["per_capita"].rolling(7).mean().max()
+        * 1.05
+    )
+    return max_per_capita_value
 
 
 if __name__ == "__main__":
