@@ -8,11 +8,11 @@ GRAY = "#808080"
 RED = "#FF0000"
 GREEN = "#008000"
 
-METRICS = ["positiveIncrease"]  # , "hospitalizedIncrease", "deathIncrease"]
+METRICS = ["positiveIncrease", "hospitalizedIncrease", "deathIncrease"]
 IMAGE_SIZES = ["regular"]
 
 
-def main():
+def create_chart_set(use_per_capita):
     covid_data_raw = pd.read_csv("all-states-history.csv")
     print(covid_data_raw)
 
@@ -36,13 +36,16 @@ def main():
     print(f"week_ago: {week_ago}")
 
     for metric in METRICS:
-        covid_with_population["per_capita"] = (
-            covid_with_population[metric] / covid_with_population["millions"]
-        )
+        if use_per_capita:
+            covid_with_population["reporting_field"] = (
+                covid_with_population[metric] / covid_with_population["millions"]
+            )
+        else:
+            covid_with_population["reporting_field"] = covid_with_population[metric]
 
         covid_cleaned_infinity_fields = covid_with_population.replace(
             [np.inf, -np.inf], np.nan
-        ).dropna(subset=["per_capita"], how="all")
+        ).dropna(subset=["reporting_field"], how="all")
 
         largest_states = get_largest_states(covid_cleaned_infinity_fields, week_ago)
         smallest_states = get_smallest_states(covid_cleaned_infinity_fields, week_ago)
@@ -82,7 +85,7 @@ smallest_status: {smallest_states}
                     state_daily = final_data[
                         (final_data["state"] == state)
                         & (final_data["real_date"] > earliest_date)
-                    ][["date", "per_capita"]].sort_values("date")
+                    ][["date", "reporting_field"]].sort_values("date")
 
                     color = get_line_color(state, largest_states, smallest_states)
                     title_annotation = get_title_annotation(
@@ -97,7 +100,7 @@ smallest_status: {smallest_states}
 
                     ax[row, col].plot(
                         state_daily["date"],
-                        state_daily["per_capita"].rolling(7).mean(),
+                        state_daily["reporting_field"].rolling(7).mean(),
                         color=color,
                     )
                     ax[row, col].set_ylim(0, max_per_capita_value)
@@ -110,15 +113,17 @@ smallest_status: {smallest_states}
                 date_desc = "all_time"
                 if earliest_date == ninety_days_ago:
                     date_desc = "90days"
-                plt.savefig(f"covid_all_states_{metric}_{date_desc}_{image_size}.png")
+                plt.savefig(
+                    f"covid_all_states_{metric}_{use_per_capita}_{date_desc}_{image_size}.png"
+                )
 
 
 def get_largest_states(df, date):
     last_week_largest = (
-        df[df["real_date"] >= date][["date", "state", "per_capita"]]
+        df[df["real_date"] >= date][["date", "state", "reporting_field"]]
         .groupby(by="state")
         .sum()
-        .nlargest(3, "per_capita")
+        .nlargest(3, "reporting_field")
     )
     print("Largest:")
     print(last_week_largest)
@@ -129,10 +134,10 @@ def get_largest_states(df, date):
 
 def get_smallest_states(df, date):
     last_week_smallest = (
-        df[df["real_date"] >= date][["date", "state", "per_capita"]]
+        df[df["real_date"] >= date][["date", "state", "reporting_field"]]
         .groupby(by="state")
         .sum()
-        .nsmallest(3, "per_capita")
+        .nsmallest(3, "reporting_field")
     )
     print("Smallest:")
     print(last_week_smallest)
@@ -143,7 +148,7 @@ def get_smallest_states(df, date):
 
 def get_max_per_capita_value_for_timeframe(df, earliest_date):
     max_per_capita_value = (
-        df[df["real_date"] >= earliest_date]["per_capita"].rolling(7).mean().max()
+        df[df["real_date"] >= earliest_date]["reporting_field"].rolling(7).mean().max()
         * 1.05
     )
     return max_per_capita_value
@@ -169,4 +174,5 @@ def get_title_annotation(state, largest_states, smallest_states):
 
 if __name__ == "__main__":
 
-    main()
+    create_chart_set(True)
+    create_chart_set(False)
