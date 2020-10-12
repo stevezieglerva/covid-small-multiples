@@ -9,7 +9,7 @@ RED = "#FF0000"
 GREEN = "#008000"
 
 METRICS = ["positiveIncrease", "hospitalizedIncrease", "deathIncrease"]
-IMAGE_SIZES = ["regular"]  # ["regular", "large"]
+IMAGE_SIZES = ["regular", "large"]
 
 
 def main():
@@ -94,7 +94,7 @@ max_per_capita_value: {max_per_capita_value}
 
                 current_fig_size = (10, 12)
                 if image_size == "large":
-                    current_fig_size = (14, 16)
+                    current_fig_size = (14, 18)
                 fig, ax = plt.subplots(height, width, figsize=current_fig_size)
                 fig.tight_layout()
                 for index, state in enumerate(state_list):
