@@ -10,7 +10,6 @@ GREEN = "#008000"
 
 METRICS = [
     "positiveIncrease",
-    "deathIncrease",
 ]  # ["positiveIncrease", "hospitalizedIncrease", "deathIncrease"]
 IMAGE_SIZES = ["regular"]  # ["regular", "large"]
 
@@ -29,6 +28,8 @@ def main():
     covid_with_population = pd.merge(covid_data_raw, population, on="state")
     print(covid_with_population)
 
+    state_list = covid_with_population["state"].unique()
+
     max_date = covid_with_population["real_date"].max()
     print(f"max_date: {max_date}")
     ninety_days_ago = max_date - timedelta(90)
@@ -45,22 +46,28 @@ def main():
             subset=["per_capita"], how="all"
         )
 
-        last_day_largest = no_inf[no_inf["real_date"] >= week_ago][
-            ["date", "state", "per_capita"]
-        ].nlargest(3, "per_capita")
+        last_day_largest = (
+            no_inf[no_inf["real_date"] >= week_ago][["date", "state", "per_capita"]]
+            .groupby(by="state")
+            .sum()
+            .nlargest(3, "per_capita")
+        )
         print("Largest:")
+        print(last_day_largest.info())
         print(last_day_largest)
-        largest_states = last_day_largest["state"].tolist()
+        largest_states = last_day_largest.index.values.tolist()
+        print(f"largest_states: {largest_states}")
 
-        last_day_smallest = no_inf[no_inf["real_date"] >= week_ago][
-            ["date", "state", "per_capita"]
-        ].nsmallest(3, "per_capita")
+        last_day_smallest = (
+            no_inf[no_inf["real_date"] >= week_ago][["date", "state", "per_capita"]]
+            .groupby(by="state")
+            .sum()
+            .nsmallest(3, "per_capita")
+        )
         print("Smallest:")
         print(last_day_smallest)
-        smallest_states = last_day_smallest["state"].tolist()
-
-        state_list = covid_with_population["state"].unique()
-        print(state_list)
+        smallest_states = last_day_smallest.index.values.tolist()
+        print(f"smallest_states: {smallest_states}")
 
         for earliest_date in [ninety_days_ago, datetime(2010, 5, 3)]:
             final_data = no_inf
@@ -75,7 +82,6 @@ def main():
                 .max()
                 * 1.05
             )
-            print(f"max_per_capita_value: {max_per_capita_value}")
 
             for image_size in IMAGE_SIZES:
                 chart_meta = f"""
@@ -93,7 +99,9 @@ max_per_capita_value: {max_per_capita_value}
                     current_fig_size = (14, 16)
                 fig, ax = plt.subplots(height, width, figsize=current_fig_size)
                 fig.tight_layout()
-                for index, state in enumerate(["NC", "NY", "MT", "SD"]):
+                for index, state in enumerate(
+                    ["NC", "NY", "MT", "SD", "TX", "AZ", "DC"]
+                ):
                     row = int(index / width)
                     col = index % width
                     print(f"{row}, {col}. {state}")
