@@ -8,9 +8,7 @@ GRAY = "#808080"
 RED = "#FF0000"
 GREEN = "#008000"
 
-METRICS = [
-    "positiveIncrease",
-]  # ["positiveIncrease", "hospitalizedIncrease", "deathIncrease"]
+METRICS = ["positiveIncrease", "hospitalizedIncrease", "deathIncrease"]
 IMAGE_SIZES = ["regular"]  # ["regular", "large"]
 
 
@@ -99,9 +97,7 @@ max_per_capita_value: {max_per_capita_value}
                     current_fig_size = (14, 16)
                 fig, ax = plt.subplots(height, width, figsize=current_fig_size)
                 fig.tight_layout()
-                for index, state in enumerate(
-                    ["NC", "NY", "MT", "SD", "TX", "AZ", "DC"]
-                ):
+                for index, state in enumerate(state_list):
                     row = int(index / width)
                     col = index % width
                     print(f"{row}, {col}. {state}")
