@@ -8,8 +8,8 @@ GRAY = "#808080"
 RED = "#FF0000"
 GREEN = "#008000"
 
-METRICS = ["positiveIncrease", "hospitalizedIncrease", "deathIncrease"]
-IMAGE_SIZES = ["regular", "large"]
+METRICS = ["positiveIncrease"]  # , "hospitalizedIncrease", "deathIncrease"]
+IMAGE_SIZES = ["regular"]
 
 
 def main():
@@ -40,24 +40,27 @@ def main():
             covid_with_population[metric] / covid_with_population["millions"]
         )
 
-        no_inf = covid_with_population.replace([np.inf, -np.inf], np.nan).dropna(
-            subset=["per_capita"], how="all"
-        )
+        covid_cleaned_infinity_fields = covid_with_population.replace(
+            [np.inf, -np.inf], np.nan
+        ).dropna(subset=["per_capita"], how="all")
 
         last_day_largest = (
-            no_inf[no_inf["real_date"] >= week_ago][["date", "state", "per_capita"]]
+            covid_cleaned_infinity_fields[
+                covid_cleaned_infinity_fields["real_date"] >= week_ago
+            ][["date", "state", "per_capita"]]
             .groupby(by="state")
             .sum()
             .nlargest(3, "per_capita")
         )
         print("Largest:")
-        print(last_day_largest.info())
         print(last_day_largest)
         largest_states = last_day_largest.index.values.tolist()
         print(f"largest_states: {largest_states}")
 
         last_day_smallest = (
-            no_inf[no_inf["real_date"] >= week_ago][["date", "state", "per_capita"]]
+            covid_cleaned_infinity_fields[
+                covid_cleaned_infinity_fields["real_date"] >= week_ago
+            ][["date", "state", "per_capita"]]
             .groupby(by="state")
             .sum()
             .nsmallest(3, "per_capita")
@@ -68,13 +71,15 @@ def main():
         print(f"smallest_states: {smallest_states}")
 
         for earliest_date in [ninety_days_ago, datetime(2010, 5, 3)]:
-            final_data = no_inf
+            final_data = covid_cleaned_infinity_fields
             plt.subplots_adjust(hspace=0.1)
             width = 4
             height = 13
 
             max_per_capita_value = (
-                no_inf[no_inf["real_date"] >= earliest_date]["per_capita"]
+                covid_cleaned_infinity_fields[
+                    covid_cleaned_infinity_fields["real_date"] >= earliest_date
+                ]["per_capita"]
                 .rolling(7)
                 .mean()
                 .max()
@@ -97,7 +102,7 @@ max_per_capita_value: {max_per_capita_value}
                     current_fig_size = (14, 18)
                 fig, ax = plt.subplots(height, width, figsize=current_fig_size)
                 fig.tight_layout()
-                for index, state in enumerate(state_list):
+                for index, state in enumerate(["NC", "MT", "SC", "SD", "NY"]):
                     row = int(index / width)
                     col = index % width
                     print(f"{row}, {col}. {state}")
