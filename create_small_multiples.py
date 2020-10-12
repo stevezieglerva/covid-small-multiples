@@ -8,6 +8,12 @@ GRAY = "#808080"
 RED = "#FF0000"
 GREEN = "#008000"
 
+METRICS = [
+    "positiveIncrease",
+    "deathIncrease",
+]  # ["positiveIncrease", "hospitalizedIncrease", "deathIncrease"]
+IMAGE_SIZES = ["regular"]  # ["regular", "large"]
+
 
 def main():
     covid_data_raw = pd.read_csv("all-states-history.csv")
@@ -30,8 +36,7 @@ def main():
     week_ago = max_date - timedelta(7)
     print(f"week_ago: {week_ago}")
 
-    metrics = ["positiveIncrease", "hospitalizedIncrease", "deathIncrease"]
-    for metric in metrics:
+    for metric in METRICS:
         covid_with_population["per_capita"] = (
             covid_with_population[metric] / covid_with_population["millions"]
         )
@@ -39,9 +44,6 @@ def main():
         no_inf = covid_with_population.replace([np.inf, -np.inf], np.nan).dropna(
             subset=["per_capita"], how="all"
         )
-
-        max_per_capita_value = no_inf["per_capita"].rolling(7).mean().max() * 1.05
-        print(f"max_per_capita_value: {max_per_capita_value}")
 
         last_day_largest = no_inf[no_inf["real_date"] >= week_ago][
             ["date", "state", "per_capita"]
@@ -65,17 +67,36 @@ def main():
             plt.subplots_adjust(hspace=0.1)
             width = 4
             height = 13
-            for image_size in ["regular", "large"]:
+
+            max_per_capita_value = (
+                no_inf[no_inf["real_date"] >= earliest_date]["per_capita"]
+                .rolling(7)
+                .mean()
+                .max()
+                * 1.05
+            )
+            print(f"max_per_capita_value: {max_per_capita_value}")
+
+            for image_size in IMAGE_SIZES:
+                chart_meta = f"""
+
+_____________________________________________
+metric: {metric}
+earliest_date: {earliest_date}
+image_size: {image_size}
+max_per_capita_value: {max_per_capita_value}
+"""
+                print(chart_meta)
+
                 current_fig_size = (10, 12)
                 if image_size == "large":
                     current_fig_size = (14, 16)
                 fig, ax = plt.subplots(height, width, figsize=current_fig_size)
                 fig.tight_layout()
-                for index, state in enumerate(state_list):
+                for index, state in enumerate(["NC", "NY", "MT", "SD"]):
                     row = int(index / width)
                     col = index % width
                     print(f"{row}, {col}. {state}")
-                    # tips[(tips['time'] == 'Dinner') & (tips['tip'] > 5.00)]
                     state_daily = final_data[
                         (final_data["state"] == state)
                         & (final_data["real_date"] > earliest_date)
