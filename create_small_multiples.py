@@ -9,7 +9,7 @@ RED = "#FF0000"
 GREEN = "#008000"
 
 METRICS = ["positiveIncrease", "hospitalizedIncrease", "deathIncrease"]
-IMAGE_SIZES = ["regular"]
+IMAGE_SIZES = ["regular", "large"]
 
 
 def create_chart_set(use_per_capita):
@@ -78,7 +78,7 @@ smallest_status: {smallest_states}
                     current_fig_size = (14, 18)
                 fig, ax = plt.subplots(height, width, figsize=current_fig_size)
                 fig.tight_layout()
-                for index, state in enumerate(["NC", "MT", "SC", "SD", "NY"]):
+                for index, state in enumerate(state_list):
                     row = int(index / width)
                     col = index % width
                     print(f"{row}, {col}. {state}")
@@ -114,7 +114,7 @@ smallest_status: {smallest_states}
                 if earliest_date == ninety_days_ago:
                     date_desc = "90days"
                 plt.savefig(
-                    f"covid_all_states_{metric}_{use_per_capita}_{date_desc}_{image_size}.png"
+                    f"covid_all_states_{use_per_capita}_{date_desc}_{metric}_{image_size}.png"
                 )
 
 
