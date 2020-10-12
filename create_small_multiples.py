@@ -84,8 +84,10 @@ smallest_status: {smallest_states}
                         & (final_data["real_date"] > earliest_date)
                     ][["date", "per_capita"]].sort_values("date")
 
-                    color = GRAY
-                    title_annotation = ""
+                    color = get_line_color(state, largest_states, smallest_states)
+                    title_annotation = get_title_annotation(
+                        state, largest_states, smallest_states
+                    )
                     if state in largest_states:
                         color = RED
                         title_annotation = " !"
@@ -145,6 +147,24 @@ def get_max_per_capita_value_for_timeframe(df, earliest_date):
         * 1.05
     )
     return max_per_capita_value
+
+
+def get_line_color(state, largest_states, smallest_states):
+    color = GRAY
+    if state in largest_states:
+        color = RED
+    if state in smallest_states:
+        color = GREEN
+    return color
+
+
+def get_title_annotation(state, largest_states, smallest_states):
+    title_annotation = ""
+    if state in largest_states:
+        title_annotation = " !"
+    if state in smallest_states:
+        title_annotation = " *"
+    return title_annotation
 
 
 if __name__ == "__main__":
