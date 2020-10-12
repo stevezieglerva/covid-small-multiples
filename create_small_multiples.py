@@ -27,6 +27,8 @@ def main():
     print(f"max_date: {max_date}")
     ninety_days_ago = max_date - timedelta(90)
     print(f"ninety_days_ago: {ninety_days_ago}")
+    week_ago = max_date - timedelta(7)
+    print(f"week_ago: {week_ago}")
 
     metrics = ["positiveIncrease", "hospitalizedIncrease", "deathIncrease"]
     for metric in metrics:
@@ -41,14 +43,14 @@ def main():
         max_per_capita_value = no_inf["per_capita"].rolling(7).mean().max() * 1.05
         print(f"max_per_capita_value: {max_per_capita_value}")
 
-        last_day_largest = no_inf[no_inf["real_date"] == max_date][
+        last_day_largest = no_inf[no_inf["real_date"] >= week_ago][
             ["date", "state", "per_capita"]
         ].nlargest(3, "per_capita")
         print("Largest:")
         print(last_day_largest)
         largest_states = last_day_largest["state"].tolist()
 
-        last_day_smallest = no_inf[no_inf["real_date"] == max_date][
+        last_day_smallest = no_inf[no_inf["real_date"] >= week_ago][
             ["date", "state", "per_capita"]
         ].nsmallest(3, "per_capita")
         print("Smallest:")
