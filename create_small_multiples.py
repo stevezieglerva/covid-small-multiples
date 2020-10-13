@@ -8,11 +8,8 @@ GRAY = "#808080"
 RED = "#FF0000"
 GREEN = "#008000"
 
-METRICS = ["positiveIncrease", "hospitalizedIncrease", "deathIncrease"]
-IMAGE_SIZES = ["regular", "large"]
 
-
-def create_chart_set(use_per_capita):
+def create_chart_set(use_per_capita, metrics, image_sizes, specific_states=[]):
     covid_data_raw = pd.read_csv("all-states-history.csv")
     print(covid_data_raw)
 
@@ -35,7 +32,7 @@ def create_chart_set(use_per_capita):
     week_ago = max_date - timedelta(7)
     print(f"week_ago: {week_ago}")
 
-    for metric in METRICS:
+    for metric in metrics:
         if use_per_capita:
             covid_with_population["reporting_field"] = (
                 covid_with_population[metric] / covid_with_population["millions"]
@@ -71,13 +68,15 @@ smallest_status: {smallest_states}
 """
             print(chart_meta)
 
-            for image_size in IMAGE_SIZES:
+            for image_size in image_sizes:
 
                 current_fig_size = (10, 12)
                 if image_size == "large":
                     current_fig_size = (14, 18)
                 fig, ax = plt.subplots(height, width, figsize=current_fig_size)
                 fig.tight_layout()
+                if specific_states:
+                    state_list = specific_states
                 for index, state in enumerate(state_list):
                     row = int(index / width)
                     col = index % width
@@ -85,7 +84,10 @@ smallest_status: {smallest_states}
                     state_daily = final_data[
                         (final_data["state"] == state)
                         & (final_data["real_date"] > earliest_date)
-                    ][["date", "reporting_field"]].sort_values("date")
+                    ][["date", metric, "reporting_field", "millions"]].sort_values(
+                        "date"
+                    )
+                    print(state_daily)
 
                     color = get_line_color(state, largest_states, smallest_states)
                     title_annotation = get_title_annotation(
@@ -113,8 +115,11 @@ smallest_status: {smallest_states}
                 date_desc = "all_time"
                 if earliest_date == ninety_days_ago:
                     date_desc = "90days"
+                state_desc = "all_states"
+                if specific_states:
+                    state_desc = "specific_states"
                 plt.savefig(
-                    f"covid_all_states_{use_per_capita}_{date_desc}_{metric}_{image_size}.png"
+                    f"covid/{state_desc}/{use_per_capita}/{date_desc}/{metric}_{image_size}.png"
                 )
 
 
@@ -174,5 +179,34 @@ def get_title_annotation(state, largest_states, smallest_states):
 
 if __name__ == "__main__":
 
-    create_chart_set(True)
-    create_chart_set(False)
+    METRICS = ["positiveIncrease", "hospitalizedIncrease", "deathIncrease"]
+    IMAGE_SIZES = ["regular", "large"]
+    specific_states = [
+        "NY",
+        "CA",
+        "FL",
+        "AZ",
+        "NC",
+        "MT",
+        "WI",
+        "AR",
+        "WI",
+        "IL",
+        "VA",
+        "MD",
+    ]
+
+    create_chart_set(
+        True,
+        METRICS,
+        IMAGE_SIZES,
+        sorted(specific_states),
+    )
+    create_chart_set(
+        False,
+        METRICS,
+        IMAGE_SIZES,
+        sorted(specific_states),
+    )
+    create_chart_set(True, METRICS, IMAGE_SIZES)
+    create_chart_set(False, METRICS, IMAGE_SIZES)
