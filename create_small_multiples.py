@@ -78,7 +78,6 @@ smallest_status: {smallest_states}
                     current_fig_size = (14, 18)
                 if specific_states:
                     current_fig_size = (10, 3)
-                print(f"\n{height}/{width}")
                 fig, ax = plt.subplots(height, width, figsize=current_fig_size)
                 fig.tight_layout()
                 if specific_states:
@@ -113,7 +112,7 @@ smallest_status: {smallest_states}
                     ax[row, col].set_ylim(0, max_per_capita_value)
                     ax[row, col].get_xaxis().set_visible(False)
                     ax[row, col].get_yaxis().set_visible(False)
-                    ax[row, col].set_title(f"{state}{title_annotation}", y=1)
+                    ax[row, col].set_title(f"{state}{title_annotation}", y=0.9)
                 if not specific_states:
                     ax[12, 3].get_xaxis().set_visible(False)
                     ax[12, 3].get_yaxis().set_visible(False)
@@ -185,10 +184,8 @@ def get_title_annotation(state, largest_states, smallest_states):
 
 if __name__ == "__main__":
 
-    METRICS = ["positiveIncrease"]  # , "hospitalizedIncrease", "deathIncrease"]
-    IMAGE_SIZES = [
-        "regular",
-    ]  # "large"]
+    METRICS = ["positiveIncrease", "hospitalizedIncrease", "deathIncrease"]
+    IMAGE_SIZES = ["regular", "large"]
     specific_states = [
         "NY",
         "CA",
@@ -216,5 +213,5 @@ if __name__ == "__main__":
         IMAGE_SIZES,
         sorted(specific_states),
     )
-    # create_chart_set(True, METRICS, IMAGE_SIZES)
-    # create_chart_set(False, METRICS, IMAGE_SIZES)
+    create_chart_set(True, METRICS, IMAGE_SIZES)
+    create_chart_set(False, METRICS, IMAGE_SIZES)
