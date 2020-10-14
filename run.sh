@@ -7,6 +7,6 @@ curl -o all-states-history.csv https://covidtracking.com/data/download/all-state
 veb
 python3 create_small_multiples.py 
 
-aws s3 cp covid/ s3://svz-public/covid_small_multiples/ --recursive --exclude "*" --include "ß*.png"
+aws s3 cp covid/ s3://svz-public/covid_small_multiples/ --recursive --exclude "*" --include "*.png"
 
 
