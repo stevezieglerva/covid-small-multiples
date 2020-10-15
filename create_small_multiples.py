@@ -32,7 +32,7 @@ def create_chart_set(use_per_capita, metrics, image_sizes, specific_states=[]):
     print(f"week_ago: {week_ago}")
 
     for metric in metrics:
-        if use_per_capita:
+        if use_per_capita == "per_capita":
             covid_with_population["reporting_field"] = (
                 covid_with_population[metric] / covid_with_population["millions"]
             )

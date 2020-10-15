@@ -27,13 +27,13 @@ class UnitTests(unittest.TestCase):
         ]
 
         create_chart_set(
-            True,
+            "per_capita",
             METRICS,
             IMAGE_SIZES,
             sorted(specific_states),
         )
         create_chart_set(
-            True,
+            "totals",
             METRICS,
             IMAGE_SIZES,
         )
