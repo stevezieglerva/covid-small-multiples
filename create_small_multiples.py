@@ -62,12 +62,13 @@ def create_chart_set(use_per_capita, metrics, image_sizes, specific_states=[]):
             chart_meta = f"""
 
 _____________________________________________
-metric: {metric}
-earliest_date: {earliest_date}
-height x width: {height} / {width}
+metric:               {metric}
+earliest_date:        {earliest_date}
+height x width:       {height} x {width}
 max_per_capita_value: {max_per_capita_value}
-largest_states: {largest_states}
-smallest_status: {smallest_states}
+largest_states:       {largest_states}
+smallest_status:      {smallest_states}
+
 """
             print(chart_meta)
 
@@ -123,9 +124,10 @@ smallest_status: {smallest_states}
                 state_desc = "all_states"
                 if specific_states:
                     state_desc = "specific_states"
-                plt.savefig(
-                    f"covid/{state_desc}/{use_per_capita}/{date_desc}/{metric}_{image_size}.png"
-                )
+
+                name = f"covid/{state_desc}/{use_per_capita}/{date_desc}/{metric}_{image_size}.png"
+                fig.text(0, 0, name, fontsize=10)
+                plt.savefig(name)
 
 
 def get_largest_states(df, date):
