@@ -126,7 +126,8 @@ smallest_status:      {smallest_states}
                     state_desc = "specific_states"
 
                 name = f"covid/{state_desc}/{use_per_capita}/{date_desc}/{metric}_{image_size}.png"
-                fig.text(0, 0, name, fontsize=10)
+                figure_label = f"{name} - {datetime.now()}"
+                fig.text(0, 0, figure_label, fontsize=10)
                 plt.savefig(name)
 
 
@@ -204,16 +205,16 @@ if __name__ == "__main__":
     ]
 
     create_chart_set(
-        True,
+        "per_capita",
         METRICS,
         IMAGE_SIZES,
         sorted(specific_states),
     )
     create_chart_set(
-        False,
+        "totals",
         METRICS,
         IMAGE_SIZES,
         sorted(specific_states),
     )
-    create_chart_set(True, METRICS, IMAGE_SIZES)
-    create_chart_set(False, METRICS, IMAGE_SIZES)
+    create_chart_set("per_capita", METRICS, IMAGE_SIZES)
+    create_chart_set("totals", METRICS, IMAGE_SIZES)
