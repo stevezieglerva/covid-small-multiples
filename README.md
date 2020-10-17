@@ -6,6 +6,6 @@ This is a Python script to create small multiples of key data from The COVID Tra
 
 
 Sample chart:
-![](https://s3.amazonaws.com/svz-public/covid_small_multiples/covid_all_states_positiveIncrease_regular.png)
+![](https://s3.amazonaws.com/svz-public/covid_small_multiples/all_states/per_capita/all_time/positiveIncrease_regular.png)
 
 
