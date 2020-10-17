@@ -1,4 +1,6 @@
 *.code-workspace
+__pycache__/**/**
+.vscode/**/**
 venv/**/**
 *.png
 all-states-history.csv
