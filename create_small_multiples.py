@@ -46,7 +46,8 @@ def create_chart_set(use_per_capita, metrics, image_sizes, specific_states=[]):
         largest_states = get_largest_states(covid_cleaned_infinity_fields, week_ago)
         smallest_states = get_smallest_states(covid_cleaned_infinity_fields, week_ago)
 
-        for earliest_date in [ninety_days_ago, datetime(2010, 5, 3)]:
+        covid_tracking_project_earliest_date = datetime(2020, 5, 3)
+        for earliest_date in [ninety_days_ago, covid_tracking_project_earliest_date]:
             final_data = covid_cleaned_infinity_fields
             plt.subplots_adjust(hspace=0.1)
             width = 4
