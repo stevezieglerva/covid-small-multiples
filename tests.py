@@ -32,6 +32,30 @@ class UnitTests(unittest.TestCase):
             IMAGE_SIZES,
             sorted(specific_states),
         )
+
+        # Assert
+
+    def test_create_chart_set__given_small_run__then_no_exceptions(self):
+        # Arrange
+
+        # Act
+        METRICS = ["positiveIncrease"]  # , "hospitalizedIncrease", "deathIncrease"]
+        IMAGE_SIZES = ["regular"]  # , "large"]
+        specific_states = [
+            "NY",
+            "CA",
+            "FL",
+            "AZ",
+            "NC",
+            "MT",
+            "AR",
+            "WI",
+            "IL",
+            "VA",
+            "MD",
+            "DC",
+        ]
+
         create_chart_set(
             "totals",
             METRICS,
