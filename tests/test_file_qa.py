@@ -9,9 +9,14 @@ class FileQAUnitTests(unittest.TestCase):
         # Arrange
         filename = "filename.csv"
         fields = ["cola", "colb"]
+        field_stats = [
+            FieldStats(
+                name="cola", delta_threshold=0.1, min=1, max=20, average=10, std_dev=2
+            )
+        ]
 
         # Act
-        results = validate_csv(filename, fields)
+        results = validate_csv(filename, fields, field_stats)
 
         # Assert
 

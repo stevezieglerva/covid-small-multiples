@@ -6,5 +6,5 @@ FieldStats = collections.namedtuple(
 )
 
 
-def validate_csv(filename, fields):
+def validate_csv(filename, fields, field_stats=[]):
     pass
