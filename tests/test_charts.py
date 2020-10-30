@@ -4,7 +4,7 @@ from unittest.mock import patch, Mock, MagicMock, PropertyMock
 from create_small_multiples import *
 
 
-class UnitTests(unittest.TestCase):
+class ChartsUnitTests(unittest.TestCase):
     def test_create_chart_set__given_small_run__then_no_exceptions(self):
         # Arrange
 
@@ -35,7 +35,7 @@ class UnitTests(unittest.TestCase):
 
         # Assert
 
-    def test_create_chart_set__given_small_run__then_no_exceptions(self):
+    def test_create_chart_set__given_big_run__then_no_exceptions(self):
         # Arrange
 
         # Act
