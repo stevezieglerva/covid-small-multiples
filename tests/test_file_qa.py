@@ -5,7 +5,7 @@ from validate_csv import *
 
 
 class FileQAUnitTests(unittest.TestCase):
-    def test_CSV__given_single_column_table_that_matches_expected_exactly__then_no_errors_returned(
+    def test_CSV__given_single_col_table_that_matches_expected_exactly__then_no_errors_returned(
         self,
     ):
         # Arrange
@@ -22,7 +22,7 @@ class FileQAUnitTests(unittest.TestCase):
         # Assert
         self.assertEqual(len(results), 0)
 
-    def test_CSV__given_single_column_table_avg_is_lower_outside_threshold__then_average_error_returned(
+    def test_CSV__given_single_col_table_avg_is_lower_outside_threshold__then_average_error_returned(
         self,
     ):
         # Arrange
@@ -39,7 +39,7 @@ class FileQAUnitTests(unittest.TestCase):
         # Assert
         self.assertEqual(results, ["cola.average of 5.0 is not similar to 4"])
 
-    def test_CSV__given_single_column_table_avg_is_higher_outside_threshold__then_average_error_returned(
+    def test_CSV__given_single_col_table_avg_is_higher_outside_threshold__then_average_error_returned(
         self,
     ):
         # Arrange
@@ -56,7 +56,7 @@ class FileQAUnitTests(unittest.TestCase):
         # Assert
         self.assertEqual(results, ["cola.average of 5.0 is not similar to 6"])
 
-    def test_CSV__given_single_column_table_stddev_is_outside_threshold__then_average_error_returned(
+    def test_CSV__given_single_col_table_stddev_is_outside_threshold__then_average_error_returned(
         self,
     ):
         # Arrange
@@ -73,7 +73,7 @@ class FileQAUnitTests(unittest.TestCase):
         # Assert
         self.assertEqual(results, ["cola.std_dev of 3.32 is not similar to 2.8"])
 
-    def test_CSV__given_mutli_column_table_that_matches_expected_exactly__then_no_errors_returned(
+    def test_CSV__given_mutli_col_table_that_matches_expected_exactly__then_no_errors_returned(
         self,
     ):
         # Arrange
