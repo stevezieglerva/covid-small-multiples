@@ -2,6 +2,8 @@ import glob
 import json
 import sys
 import unittest
+import contextlib
+import io
 from unittest.mock import MagicMock, Mock, PropertyMock, patch
 
 import HtmlTestRunner
@@ -35,8 +37,6 @@ if __name__ == "__main__":
     start_dir = "tests/"
     pattern = "test_*.*"
     if len(sys.argv) > 1:
-        for arg in sys.argv:
-            print(arg)
         start_dir = sys.argv[1]
         pattern = sys.argv[2]
 

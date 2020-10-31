@@ -5,3 +5,5 @@ venv/**/**
 *.png
 all-states-history.csv
 reports/**/**
+**/**/__pycache__/**/**
+**/**/discover/**/**

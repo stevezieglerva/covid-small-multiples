@@ -1,0 +1,33 @@
+
+start_dir: tests
+pattern: *qa*.*
+
+hello*** CAPTURED TEXT***:
+
+Running tests... 
+----------------------------------------------------------------------
+ test_CSV__given_single_column_table_that_is_valid__then_no_errors_returned (test_file_qa.FileQAUnitTests) ... OK (0.003021)s
+
+----------------------------------------------------------------------
+Ran 1 test in 0:00:00
+
+OK
+
+
+
+Generating HTML reports... 
+reports/test_results.json_test_file_qa.FileQAUnitTests.html
+
+
+
+🗃  Test Results:
+
+
+📋 test_file_qa.FileQAUnitTests:
+   Status  | Test
+   ---------------------------------------------------
+   ✅ pass  | test_CSV__given_single_column_table_that_is_valid__then_no_errors_returned      
+
+🗂  Total Tests: 1
+
+👍🎉 All tests passed!
