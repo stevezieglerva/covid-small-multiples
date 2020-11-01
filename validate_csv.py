@@ -8,8 +8,7 @@ FieldStats = collections.namedtuple(
 )
 
 
-def validate_csv(filename, fields, field_stats=[]):
-
+def validate_csv(filename, field_stats=[]):
     print("in test")
     df = pd.read_csv(filename)
     print(df)

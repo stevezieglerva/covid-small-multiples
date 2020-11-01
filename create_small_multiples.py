@@ -3,6 +3,7 @@ import xlrd
 import matplotlib.pyplot as plt
 import numpy as np
 from datetime import datetime, timedelta
+from validate_csv import *
 
 GRAY = "#808080"
 RED = "#FF0000"
@@ -10,7 +11,31 @@ GREEN = "#008000"
 
 
 def create_chart_set(use_per_capita, metrics, image_sizes, specific_states=[]):
+    errors = validate_csv(
+        "all-states-history.csv",
+        [
+            FieldStats(
+                name="positiveIncrease", delta_threshold=0.1, average=650, std_dev=1200
+            ),
+            FieldStats(
+                name="hospitalizedIncrease",
+                delta_threshold=0.1,
+                average=34,
+                std_dev=250,
+            ),
+            FieldStats(
+                name="deathIncrease",
+                delta_threshold=0.1,
+                average=16,
+                std_dev=45,
+            ),
+        ],
+    )
+    if errors:
+        print(errors)
+        quit()
     covid_data_raw = pd.read_csv("all-states-history.csv")
+    print("The downloaded data is different than expected. Here is what is different:")
     print(covid_data_raw)
 
     population = pd.read_csv("state_2010_populations.csv")
