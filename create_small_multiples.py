@@ -15,7 +15,7 @@ def create_chart_set(use_per_capita, metrics, image_sizes, specific_states=[]):
         "all-states-history.csv",
         [
             FieldStats(
-                name="positiveIncrease", delta_threshold=0.2, average=1100, std_dev=2000
+                name="positiveIncrease", delta_threshold=0.2, average=1100, std_dev=2500
             ),
             FieldStats(
                 name="hospitalizedIncrease",
