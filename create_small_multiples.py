@@ -21,7 +21,7 @@ def create_chart_set(use_per_capita, metrics, image_sizes, specific_states=[]):
                 name="hospitalizedIncrease",
                 delta_threshold=0.1,
                 average=40,
-                std_dev=250,
+                std_dev=220,
             ),
             FieldStats(
                 name="deathIncrease",
